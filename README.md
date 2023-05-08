@@ -21,11 +21,12 @@ To address part of this issue, we are creating a machine learning model to predi
 
 # Data
 
-Our flight-related data comes from [Kaggle’s 2015 Flight Delays and Cancellation](https://www.kaggle.com/datasets/usdot/flight-delays?select=airports.csv) dataset. This data includes flight information such as airline, airport origin, airport destination, city, state, country, latitude of origin, longitude of origin, and what day the flight occurred. Using information provided in the Kaggle dataset, we can figure out the weather-related data of the flight by using Climate.gov’s [Past Weather by Zip Code Datatable](https://www.climate.gov/maps-data/dataset/past-weather-zip-code-data-table). These two datasets combined allow for our model to factor in previously known information such as flight origin and destination, flight time, airport temperature, precipitation, wind speed, and more for the model to predict the delay time. 
+Our flight-related data comes from [Kaggle’s 2015 Flight Delays and Cancellation](https://www.kaggle.com/datasets/usdot/flight-delays?select=airports.csv) dataset. This data includes flight information such as airline, airport origin, airport destination, city, state, country, latitude of origin, longitude of origin, and what day the flight occurred. We mapped weather-related data from Climate.gov’s [Past Weather by Zip Code Datatable](https://www.climate.gov/maps-data/dataset/past-weather-zip-code-data-table) to the Kaggle dataset. These two datasets combined allow for our model to factor in previously known information such as flight origin and destination, flight time, airport temperature, precipitation, wind speed, and more for the model to predict the delay time. 
 
-From the Kaggle dataset, there are approximately 5 million samples to train, evaluate, and test the model on. To obtain weather information about all the flights, it would take a manual process of entering the zip code and year for every location of the flights in the Kaggle dataset and then downloading a CSV file for each area. This would take an unreasonable amount of time. To overcome this, we decided to focus on flight information only coming from Chicago’s O’Hare International Airport (ORD). This airport is a major international airport in a location that has a large span of weather variations from hot summers to harsh winters with extreme cold and snow. Using only data focused on Chicago, there are approximately 285,000 flight samples to use.
+From the Kaggle dataset, there are approximately 5 million samples to train, evaluate, and test the model on. To obtain weather information about all the flights, it would take a manual process of entering the zip code and year for every location of the flights in the Kaggle dataset and then downloading a CSV file for each area. This would take an unreasonable amount of time, so we decided to focus on flight information only coming from Chicago’s O’Hare International Airport (ORD). This airport is a major international airport in a location that has a large span of weather variations from hot summers to harsh winters with extreme cold and snow. Using only data focused on Chicago, there are approximately 285,000 flight samples to use.
 
 Some shortfalls of this data are that all the flight information comes from one year. For future work, we would be able to have information about all flights from the O’Hare International Airport over a large span of years. Additionally, all the information is about U.S. domestic flights, and due to a large number of sample locations, we had to focus only on the Chicago airport. The model will be most reliable in predicting delays for flights out of Chicago, but it could potentially be generalized to be used for other airports, with less reliability.
+
 
 ## Data Preprocessing
 
@@ -33,7 +34,7 @@ To start our data preprocessing, we locally removed all columns that contained d
 
 Additionally, delay result columns such as AIR_SYSTEM_DELAY, SECURITY_DELAY, AIRLINE_DELAY, LATE_AIRCRAFT_DELAY, DEPARTURE_DELAY, and ARRIVAL_DELAY were also removed locally as the scope of our project focused on predicting Weather Delays and therefore other delays would not be known pre-flight.
 
-The definitions of the dropped features are listed in Figure 1. 
+The definitions of the dropped features are listed in Figure 1.
 
 | Feature Name | Meaning |
 | :---: | --- |
@@ -79,64 +80,64 @@ Finally, to standardize the flight time across all flights, we converted the fli
 
 We plotted correlations between delay time and weather variables such as minimum temperature, max temperature, temperature difference, and precipitation. This helped us to identify any patterns or trends between flight delays and weather conditions and visualize patterns our ML model might need to recognize.
 
-Figure 2 displays the frequency distribution of flight delays. The graph clearly shows that the delays are extremely skewed left, indicating that most flights tend to be on time or only slightly delayed, with a few flights experiencing significant delays. This is also supported by the given information which shows that the average delay is only 6.34 minutes, while the maximum delay is 991 minutes.
+Figure 2 displays the frequency distribution of flight delays. The graph clearly shows that the delays are skewed left, indicating that most flights tend to be on time or only slightly delayed, with a few flights experiencing significant delays. This is also supported by the given information which shows that the average delay is only 6.34 minutes, while the maximum delay is 991 minutes.
 
 ![Bar graph showing frequency of delays and delays in minutes](Images/Frequency_of_Delays.png)
 
 <p align="center">
-Figure 2: Bar graph showing frequency of delays and delays in minutes
+Figure 2: Bar graph showing the frequency of delays compared to the length of delay in minutes for all flights from the Chicago Airport in 2015
 </p>
 
-Moving on to Figure 3, the scatter plot of Delay Length vs Time of Day seems to be random but has a few key trends. The graph shows that delays tend to be relatively low in the early morning, and then increase as the day goes on, peaking in the late afternoon and early evening. After this peak, delays gradually decrease throughout the late evening and overnight. Additionally, regardless of departure time, there seems to be a consistent chance of extreme delays.
+Moving on to Figure 3, the scatter plot of Delay Length vs Time of Day shows that there is no clear correlation between the delay length and time of day. There are some trends that have been previously supported, such as, for any given time the frequency of shorter delays is much greater. This was seen in the left skewness in Figure 1. 
 
-This pattern is likely due to a variety of factors. In the early morning, there are fewer flights and fewer passengers, so there is less congestion and fewer opportunities for delays to occur. As the day goes on, more flights and more passengers enter the system, leading to more congestion and more opportunities for delays to occur. Additionally, weather patterns may play a role, with thunderstorms and other inclement weather more likely to occur in the late afternoon and early evening. Finally, it's possible that delays early in the day can set off a chain reaction that leads to more delays later in the day.
+From the time between 0-350, there is no flight with a delay length greater than 100 minutes. This pattern is likely due to a variety of factors. In the early morning, there are fewer flights and fewer passengers, so there is less congestion and fewer opportunities for delays to occur. Finally, it's possible that delays early in the day can set off a chain reaction that leads to other flights also getting delayed.
 
 ![Scatter plot of departure time vs delay](Images/Departure_vs_Delay.png)
 
 <p align="center">
-Figure 3: Scatter plot showing departure time vs delay (in minutes)
+Figure 3: Delay Length vs Departure Time for all flights from the Chicago Airport in 2015
 </p>
 
-Intuitively, many people think about snow as a main factor in airport delays. Though as shown in the graph below, the amount of snow does not necessarily have a clear correlation to the delay time. This could be for a number of reasons. First off, airports in colder climates have experience dealing with snowy conditions and often have developed methods of mitigation, allowing air traffic to run regularly even in snowy conditions. Secondly, the snow’s relationship with weather delays could be more complex than we can represent through a simple graph. For example, snow might not become a huge factor until temperature dips below the airport’s deicer’s "holdover time limit" temperature (maximum temperature at which a deicer is expected to remain effective).
+Intuitively, many people think about snow as a main factor in airport delays. Though as shown in Figure 4, the amount of snow does not necessarily have a clear correlation to the delay time. This could be for a number of reasons. First off, airports in colder climates have experience dealing with snowy conditions and often have developed methods of mitigation, allowing air traffic to run regularly even in snowy conditions. Secondly, the snow’s relationship with weather delays could be more complex than we can represent through a simple graph. For example, snow might not become a huge factor until the temperature dips below the airport’s de-icer’s "holdover time limit" temperature (minimum temperature at which a de-icer is expected to remain effective).
 
 ![Scatter plot of snow amount vs delay](Images/Snow_vs_Delay.png)
 
 <p align="center">
-Figure 4: Scatter plot showing amount of snow (in inches) vs delay (in minutes)
+Figure 4: Delay Length vs Amount of Snow for all flights from the Chicago Airport in 2015
 </p>
 
-The amount of precipitation has a similar graph to the amount of snow. This graph includes all snowfall as it is included inside the precipitation amount. This is likely why the graph likely suffers from unclear trends, as the amount of precipitation could contribute to weather delays in a more complex relationship.
+In Figure 5, the delay length compared to the amount of precipitation has a similar graph to the amount of snow. Figure 5 also includes all snowfall as it is a form of precipitation. This is likely why the graph suffers from unclear trends, as the amount of precipitation could contribute to weather delays in a more complex relationship. 
 
 ![Scatter plot of precipitation vs delay](Images/Precipitation_vs_Delay.png)
 
 <p align="center">
-Figure 5: Scatter plot showing amount of precipitation (in inches) vs delay (in minutes)
+Figure 5: Delay Length vs Precipitation for all flights from the Chicago Airport in 2015
 </p>
 
-One of the most obvious and important features of our dataset is temperature. Generally, it is perceived that extremely cold and warm temperatures create delays and inconveniences in all aspects of day-to-day life. This idea is supported by the data. The graphs of min and max daily temperature vs weather delay below demonstrates that. Both graphs take a U shape, demonstrating that extreme temperatures in either direction causes more frequent and drastic delays. 
+One of the most obvious and important features of our dataset is temperature. Generally, it is perceived that extremely cold and warm temperatures create delays and inconveniences in all aspects of day-to-day life. This idea is supported by the data. Figures 6 and 7, the delay length compared to the minimum and max daily temperature below demonstrates that. Both graphs take a U shape, demonstrating that extreme temperatures in either direction cause more frequent and drastic delays. 
 
-Extreme temperatures, whether hot or cold, can have a significant impact on airport operations and contribute to flight delays or cancellations. In cold temperatures, equipment malfunctions such as frozen fuel lines or hydraulic systems can cause delays or cancellations. Icy conditions on aircraft wings can also affect aircraft aerodynamics and require additional de-icing precautions, leading to delays. In hot temperatures, runway conditions and air density can reduce aircraft performance, leading to longer takeoff runs or cancellations. All of these factors could be viewed as explanations as to why our graphs for min and max temperatures take a U shape with respect to weather delays. 
+Extreme temperatures, whether hot or cold, can have a significant impact on airport operations and contribute to flight delays or cancellations. In cold temperatures, equipment malfunctions such as frozen fuel lines or hydraulic systems can cause delays or cancellations. Icy conditions on aircraft wings can also affect aircraft aerodynamics and require additional de-icing precautions, leading to delays. In hot temperatures, runway conditions, and air density can reduce aircraft performance, leading to longer takeoff runs or cancellations. All of these factors could be viewed as explanations as to why our graphs for min and max temperatures take a U shape with respect to weather delays.
 
 ![Scatter plot of tempature minimum vs delay](Images/Temp_Min_vs_Delay.png)
 
 <p align="center">
-Figure 6: Scatter plot showing temperature minimum (in degrees Fahrenheit) vs delay (in minutes)
+Figure 6: Delay Length vs Minimum Daily Temperature for all Days in Chicago in 2015
 </p>
 
 ![Scatter plot of tempature maximum vs delay](Images/Temp_Max_vs_Delay.png)
 
 <p align="center">
-Figure 7: Scatter plot showing temperature maximum (in degrees Fahrenheit) vs delay (in minutes)
+Figure 7: Delay Length vs Maximum Daily Temperature for all Days in Chicago in 2015
 </p>
 
-The graph plotting temperature difference vs weather delay shows no clear correlation between drastic differences in temperature and weather delays. It is worth noting that the lack of data points exceeding a 38 degree difference in daily temperature could contribute to the absence of a clear correlation between temperature difference and weather delays at Chicago International Airport. This suggests that the temperature changes at the airport are within a relatively narrow range, which may not cause significant disruptions to airport operations.
+In Figure 8, the graph showing delay length compared to temperature difference shows no clear correlation between drastic differences in temperature and weather delays. It is worth noting that the lack of data points exceeding a 38-degree difference in daily temperature could contribute to the absence of a clear correlation between temperature difference and weather delays at Chicago International Airport. This suggests that the temperature changes at the airport are within a relatively narrow range, which may not cause significant disruptions to airport operations.
 
 Furthermore, it is important to consider that weather patterns and conditions can vary widely across different regions and airports. While a lack of correlation may be observed at Chicago International Airport, this may not necessarily hold true for other airports or regions with different weather patterns.
 
 ![Scatter plot of temperature difference vs delay](Images/Temp_Diff_vs_Delay.png)
 
 <p align="center">
-Figure 8: Scatter plot showing temperature difference (in degrees Fahrenheit) vs delay (in minutes)
+Figure 8: Delay Length vs Temperature Difference for all Days in Chicago in 2015
 </p>
 
 ## Evaluation Metrics
