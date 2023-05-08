@@ -142,11 +142,11 @@ Figure 8: Delay Length vs Temperature Difference for all Days in Chicago in 2015
 
 ## Evaluation Metrics
 
-In this section, we describe the evaluation metrics used to assess the performance of our models. The primary evaluation metric used for all models is the Keras accuracy score. This score measures the proportion of correct predictions made by the model on the test set. The accuracy score is a commonly used metric for evaluating classification models and can be interpreted as the overall correctness of the model's predictions.
+The primary evaluation metric used for all models is the Keras accuracy score. This score measures the proportion of correct predictions made by the model on the test set. The accuracy score is a commonly used metric for evaluating classification models and can be interpreted as the overall correctness of the model's predictions.
 
 ![Accuracy Equation](Images/Equation_Accuracy.png)
 
-In addition to the accuracy score, we also evaluated the models using the validation loss, which was calculated using the categorical_crossentropy loss function in the neural network. The binary_crossentropy is a loss function used in binary classification problems, and it is calculated as follows:
+In addition to the accuracy score, we also evaluated the models using the validation loss, which was calculated using the categorical binary cross-entropy loss function in the neural network. The binary cross-entropy is calculated as follows:
 
 ![CategoricalCross Equation](Images/Equation_CategoricalCross.png)
 
@@ -162,7 +162,7 @@ where:
 
 The F1 score ranges from 0 to 1, where 1 indicates perfect precision and recall. A high F1 score indicates that the model is able to achieve high precision and recall simultaneously, meaning that it can effectively identify true positive instances while minimizing false positives and false negatives. False positives (predicting a possible delay when there isn’t one), aren’t necessarily dangerous in our model since it is better to be on the cautious side, but we definitely want to minimize false negatives (predicting no delay when there is one) since if our model were to be used as a recommender to ATC, then people’s safety would be at stake. 
 
-In this study, we aimed to develop models that accurately predict weather delays for aircraft with a high degree of precision and recall. To achieve this, we set target numbers for the evaluation metrics used in this study. The target numbers were an accuracy score of at least 80%, a validation loss of less than 0.5, and an F1 score of at least 0.7. These target numbers were chosen based on previous research and domain expertise, as well as considering the consequences of false positives and false negatives in the context of flight delays. We aimed to develop models that can achieve high accuracy, minimize the validation loss, and have a high F1 score, thus providing a reliable tool for airlines and passengers to plan their travel effectively.
+In this study, we aimed to develop models that accurately predict weather delays for aircraft with a high degree of precision and recall. To achieve this, we set target numbers for the evaluation metrics used in this study. The target numbers were an accuracy score of at least 80%, a validation loss of less than 0.5, and an F1 score of at least 0.7. These target numbers were chosen based on previous research and domain expertise, as well as considering the consequences of false positives and false negatives in the context of flight delays. We aimed to develop models that can achieve high accuracy, minimize validation loss, and have a high F1 score, thus providing a reliable tool for airlines and passengers to plan their travel effectively.
 
 # Models
 
@@ -174,11 +174,11 @@ Vanilla decision trees are unstable – a single new example has the potential t
 
 Overall, we generally trained our models with a random subset of the data consisting of approximately 175,000 samples. The exceptions are mentioned below.
 
-Gradient Boosted Trees create a more accurate model because it trains multiple trees. Each new tree corrects the errors made by the previous trees. This is a good choice for our use case because many of the flights have similar data - airlines repeat the same routes multiple times over the course of the year. However, some of these end up delayed and others don’t. The gradient boosted trees have the potential to mitigate this problem by correcting for errors and capturing the subtleties.
+Gradient Boosted Trees create a more accurate model because it trains multiple trees. Each new tree corrects the errors made by the previous trees. This is a good choice for our use case because many of the flights have similar data - airlines repeat the same routes multiple times over the course of the year. However, some of these end up delayed and others don’t. The gradient-boosted trees have the potential to mitigate this problem by correcting for errors and capturing the subtleties.
 
-Random forest models train multiple trees at once. These trees are forced to pick from a random subset of features which diversifies them. Together, the trees create a forest that is collectively more stable and potentially more accurate than the rest of the trees. A major disadvantage of random forest models is that they take a long time to train. We trained our random forest model on a subset (~20%) of the training data. 
+Random forest models train multiple trees at once. These trees are forced to pick from a random subset of features that diversifies them. Together, the trees create a forest that is collectively more stable and potentially more accurate than the rest of the trees. A major disadvantage of random forest models is that they take a long time to train. We trained our random forest model on a subset (~20%) of the training data. 
 
-The NN was used because of the complex relationships snow, precipitation, and other weather data might have with each other. NN are good at finding complex relationships, and may be able to account for problems like the snow de icer "holdover time limit" temperature. For the NN, two activation functions were considered for the body of the network: the hyperbolic tangent (tanh) function and the rectified linear unit (ReLU) function. The output layer used the softmax activation function.
+The NN was used because of the complex relationships snow, precipitation, and other weather data might have with each other. NN are good at finding complex relationships and may be able to account for problems like the snow de-icer "holdover time limit" temperature. For the NN, two activation functions were considered for the body of the network: the hyperbolic tangent (tanh) function and the rectified linear unit (ReLU) function. The output layer used the softmax activation function.
 
 For KNN, the model was limited to 50k data points to allow for efficient usage.
 
