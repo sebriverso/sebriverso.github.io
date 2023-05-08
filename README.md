@@ -143,30 +143,21 @@ Figure 8: Scatter plot showing temperature difference (in degrees Fahrenheit) vs
 
 In this section, we describe the evaluation metrics used to assess the performance of our models. The primary evaluation metric used for all models is the Keras accuracy score. This score measures the proportion of correct predictions made by the model on the test set. The accuracy score is a commonly used metric for evaluating classification models and can be interpreted as the overall correctness of the model's predictions.
 
-$$
-accuracy = { {true\ positives + true\ negatives} \over {true\ positives + true\ negatives + false\ positives + false\ negatives} }
-$$
+![Accuracy Equation](Images/Equation_Accuracy.png)
 
 In addition to the accuracy score, we also evaluated the models using the validation loss, which was calculated using the categorical_crossentropy loss function in the neural network. The binary_crossentropy is a loss function used in binary classification problems, and it is calculated as follows:
 
-$$
-CategoricalCross - Entropy = {-\sum_{i=1}^C y_i \log\left( \hat {y_i} \right) }
-$$
+![CategoricalCross Equation](Images/Equation_CategoricalCross.png)
 
-Where $ C $ is the number of classes, $ y_i $ is the true label of the i-th class, and $ \hat {y_i} $ is the predicted probability of the i-th class.
+Where C is the number of classes, y<sub>i</sub> is the true label of the i-th class, and ŷ<sub>i</sub> is the predicted probability of the i-th class.
 
 Finally, we used the F1 score to evaluate the models. The F1 score is a metric that combines precision and recall, two important measures of the model's performance. It is calculated as follows:
 
-$$
-F1 = { {precision * recall} \over {precision + recall} }
-$$
+![F1 Equation](Images/Equation_F1.png)
+
 where:
-$$
-precision = {true\ positives \over {true\ positives + false\ positives }}
-$$
-$$
-recall = {true\ positives \over {true\ positives + false\ negatives} }
-$$
+
+![Precision and Recall Equations](Images/Equation_Precision_Recall.png)
 
 The F1 score ranges from 0 to 1, where 1 indicates perfect precision and recall. A high F1 score indicates that the model is able to achieve high precision and recall simultaneously, meaning that it can effectively identify true positive instances while minimizing false positives and false negatives. False positives (predicting a possible delay when there isn’t one), aren’t necessarily dangerous in our model since it is better to be on the cautious side, but we definitely want to minimize false negatives (predicting no delay when there is one) since if our model were to be used as a recommender to ATC, then people’s safety would be at stake. 
 
