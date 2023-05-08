@@ -71,45 +71,63 @@ Additionally, our model categorized delays into 9 categories based on the time o
 8. 59-130 minutes
 9. \>130 minutes
 
-The category's delay ranges were intentionally chosen based on the distribution of our dataset, so that each category contained the same amount of delays (with the exception of <1 which had far more than any other category). 
+The category's delay ranges were intentionally chosen based on the distribution of our dataset, so that each category contained the same amount of delays (approximately 2% for each category, with the exception of <1 which had far more than any other category). 
 
-To standardize the flight time across all flights, we converted the flight time into minutes past 12:00 AM value. This allowed us to easily compare the flight times of different flights.
-
-Finally, to further limit the scope of our analysis, we focused only on flights departing from Chicago Airport. This helped us to narrow down our dataset from 5 million flights to a more manageable size of 285,000 flights. Overall, these data preprocessing steps were crucial in ensuring that our analysis was accurate, reliable, and relevant to the research question at hand.
+Finally, to standardize the flight time across all flights, we converted the flight time into minutes past 12:00 AM value (0-1439). This allowed us to easily compare the flight times of different flights. Overall, these data preprocessing steps were crucial in ensuring that our analysis was accurate, reliable, and relevant to the research question at hand.
 
 ## Exploratory Data Analysis
 
-We plotted correlations between delay time and weather variables such as min temperature, max temperature, temperature difference, and precipitation. This helped us to identify any patterns or trends between flight delays and weather conditions and visualize patterns our ML model might need to recognize.
+We plotted correlations between delay time and weather variables such as minimum temperature, max temperature, temperature difference, and precipitation. This helped us to identify any patterns or trends between flight delays and weather conditions and visualize patterns our ML model might need to recognize.
 
 Figure 2 displays the frequency distribution of flight delays. The graph clearly shows that the delays are extremely skewed left, indicating that most flights tend to be on time or only slightly delayed, with a few flights experiencing significant delays. This is also supported by the given information which shows that the average delay is only 6.34 minutes, while the maximum delay is 991 minutes.
 
 ![Bar graph showing frequency of delays and delays in minutes](Images/Frequency_of_Delays.png)
+
 <p align="center">
 Figure 2: Bar graph showing frequency of delays and delays in minutes
 </p>
 
-Moving on, the scatter plot of time of day (minutes past 12am) vs delays seems to be very random but has a few key trends. The graph shows the average delay in minutes for flights departing from an airport over the course of a day. The x-axis is time of day, from earliest to latest. The y-axis is the average delay in minutes.
-
-The graph shows that delays tend to be relatively low in the early morning, and then increase as the day goes on, peaking in the late afternoon and early evening. After this peak, delays gradually decrease throughout the late evening and overnight. Additionally, regardless of departure time there seems to be a consistent chance of extreme delays.
+Moving on to Figure 3, the scatter plot of Delay Length vs Time of Day seems to be random but has a few key trends. The graph shows that delays tend to be relatively low in the early morning, and then increase as the day goes on, peaking in the late afternoon and early evening. After this peak, delays gradually decrease throughout the late evening and overnight. Additionally, regardless of departure time, there seems to be a consistent chance of extreme delays.
 
 This pattern is likely due to a variety of factors. In the early morning, there are fewer flights and fewer passengers, so there is less congestion and fewer opportunities for delays to occur. As the day goes on, more flights and more passengers enter the system, leading to more congestion and more opportunities for delays to occur. Additionally, weather patterns may play a role, with thunderstorms and other inclement weather more likely to occur in the late afternoon and early evening. Finally, it's possible that delays early in the day can set off a chain reaction that leads to more delays later in the day.
 
-![Scatter plot of departure vs delay](Images/Departure_vs_Delay.png)
+![Scatter plot of departure time vs delay](Images/Departure_vs_Delay.png)
+
+<p align="center">
+Figure 3: Scatter plot showing departure time vs delay (in minutes)
+</p>
 
 Intuitively, many people think about snow as a main factor in airport delays. Though as shown in the graph below, the amount of snow does not necessarily have a clear correlation to the delay time. This could be for a number of reasons. First off, airports in colder climates have experience dealing with snowy conditions and often have developed methods of mitigation, allowing air traffic to run regularly even in snowy conditions. Secondly, the snow’s relationship with weather delays could be more complex than we can represent through a simple graph. For example, snow might not become a huge factor until temperature dips below the airport’s deicer’s "holdover time limit" temperature (maximum temperature at which a deicer is expected to remain effective).
 
-![Scatter plot of snow vs delay](Images/Snow_vs_Delay.png)
+![Scatter plot of snow amount vs delay](Images/Snow_vs_Delay.png)
+
+<p align="center">
+Figure 4: Scatter plot showing amount of snow (in inches) vs delay (in minutes)
+</p>
 
 The amount of precipitation has a similar graph to the amount of snow. This graph includes all snowfall as it is included inside the precipitation amount. This is likely why the graph likely suffers from unclear trends, as the amount of precipitation could contribute to weather delays in a more complex relationship.
 
 ![Scatter plot of precipitation vs delay](Images/Precipitation_vs_Delay.png)
 
-One of the most obvious and important features of our dataset is temperature. Generally it is perceived that extremely cold and warm temperatures create delays and inconveniences in all aspects of day to day life. This idea is supported by the data. The graphs of min and max daily temperature vs weather delay below demonstrates that. Both graphs take a U shape, demonstrating that extreme temperatures in either direction causes more frequent and drastic delays. 
+<p align="center">
+Figure 5: Scatter plot showing amount of precipitation (in inches) vs delay (in minutes)
+</p>
+
+One of the most obvious and important features of our dataset is temperature. Generally, it is perceived that extremely cold and warm temperatures create delays and inconveniences in all aspects of day-to-day life. This idea is supported by the data. The graphs of min and max daily temperature vs weather delay below demonstrates that. Both graphs take a U shape, demonstrating that extreme temperatures in either direction causes more frequent and drastic delays. 
 
 Extreme temperatures, whether hot or cold, can have a significant impact on airport operations and contribute to flight delays or cancellations. In cold temperatures, equipment malfunctions such as frozen fuel lines or hydraulic systems can cause delays or cancellations. Icy conditions on aircraft wings can also affect aircraft aerodynamics and require additional de-icing precautions, leading to delays. In hot temperatures, runway conditions and air density can reduce aircraft performance, leading to longer takeoff runs or cancellations. All of these factors could be viewed as explanations as to why our graphs for min and max temperatures take a U shape with respect to weather delays. 
 
 ![Scatter plot of tempature minimum vs delay](Images/Temp_Min_vs_Delay.png)
+
+<p align="center">
+Figure 6: Scatter plot showing temperature minimum (in degrees Fahrenheit) vs delay (in minutes)
+</p>
+
 ![Scatter plot of tempature maximum vs delay](Images/Temp_Max_vs_Delay.png)
+
+<p align="center">
+Figure 7: Scatter plot showing temperature maximum (in degrees Fahrenheit) vs delay (in minutes)
+</p>
 
 The graph plotting temperature difference vs weather delay shows no clear correlation between drastic differences in temperature and weather delays. It is worth noting that the lack of data points exceeding a 38 degree difference in daily temperature could contribute to the absence of a clear correlation between temperature difference and weather delays at Chicago International Airport. This suggests that the temperature changes at the airport are within a relatively narrow range, which may not cause significant disruptions to airport operations.
 
@@ -117,21 +135,38 @@ Furthermore, it is important to consider that weather patterns and conditions ca
 
 ![Scatter plot of temperature difference vs delay](Images/Temp_Diff_vs_Delay.png)
 
+<p align="center">
+Figure 8: Scatter plot showing temperature difference (in degrees Fahrenheit) vs delay (in minutes)
+</p>
+
 ## Evaluation Metrics
 
 In this section, we describe the evaluation metrics used to assess the performance of our models. The primary evaluation metric used for all models is the Keras accuracy score. This score measures the proportion of correct predictions made by the model on the test set. The accuracy score is a commonly used metric for evaluating classification models and can be interpreted as the overall correctness of the model's predictions.
+
+<div>
+
 $$
 accuracy = { {true\ positives + true\ negatives} \over {true\ positives + true\ negatives + false\ positives + false\ negatives} }
 $$
 
+</div>
+
 In addition to the accuracy score, we also evaluated the models using the validation loss, which was calculated using the categorical_crossentropy loss function in the neural network. The binary_crossentropy is a loss function used in binary classification problems, and it is calculated as follows:
+
+<div>
+
 $$
 CategoricalCross - Entropy = {-\sum_{i=1}^C y_i \log\left( \hat {y_i} \right) }
 $$
 
+</div>
+
 Where $ C $ is the number of classes, $ y_i $ is the true label of the i-th class, and $ \hat {y_i} $ is the predicted probability of the i-th class.
 
 Finally, we used the F1 score to evaluate the models. The F1 score is a metric that combines precision and recall, two important measures of the model's performance. It is calculated as follows:
+
+<div>
+
 $$
 F1 = { {precision * recall} \over {precision + recall} }
 $$
@@ -142,6 +177,8 @@ $$
 $$
 recall = {true\ positives \over {true\ positives + false\ negatives} }
 $$
+
+</div>
 
 The F1 score ranges from 0 to 1, where 1 indicates perfect precision and recall. A high F1 score indicates that the model is able to achieve high precision and recall simultaneously, meaning that it can effectively identify true positive instances while minimizing false positives and false negatives. False positives (predicting a possible delay when there isn’t one), aren’t necessarily dangerous in our model since it is better to be on the cautious side, but we definitely want to minimize false negatives (predicting no delay when there is one) since if our model were to be used as a recommender to ATC, then people’s safety would be at stake. 
 
