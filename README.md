@@ -8,9 +8,9 @@
 - [Models](#models)
   - [Training](#training)
   - [Validation](#validation)
-  - [Model Notebook](#model-notebook)
 - [Results](#results)
 - [Sample Video](#sample-video)
+- [Model Notebook](#model-notebook)
 
 # The Problem
 
@@ -190,11 +190,31 @@ For the NN, after overfitting on our initial few trials early stopping was imple
 
 For the Gradient Boosted Trees, we used the hyperparameter template suggested by the official keras documentation and this did not significantly improve performance. We decided not to pursue further hyperparameter tuning because the model took an excessively long time to run.
 
-For the Random forest model, we decided not to pursue hyperparameter tuning with this model because the model also took so long to run.
+For the Random forest model, we decided not to pursue hyperparameter tuning with this model because the model also took a very long time to run.
 
 For the KNN, the hyperparameter k was tuned for values between 1 and 20. The accuracy score was plotted against the values of k to determine the most optimal k value of 5.
 
-## Model Notebook
+# Results
+
+Overall, our models had solid performance! With the best being the Gradient Boosted Tree Model.
+
+For the NN model, the test accuracy was approximately 76.67% with an F1 score of about 67%. These values are decent, but not as good compared to other models. Considering the validation accuracy was around the same, this model is probably underfitting. It is likely it needed hundreds of layers for improvement and that is why there was little change within the grid search hyperparameter tuning. In our experience, this would have taken 6 hours or more which is very hard to coordinate, since Google Colab required browsers to be open to run.
+
+For the Gradient Boosted Tree Model, the training accuracy was approximately 81% and the test accuracy was approximately 80%, which was high compared to the other models. The F1 score was 75.35%. This is by far our best model. Additionally, it was insightful in determining the features that were most important. The top 5 features (in order): Airline, average wind, day of the month, day of the week, and destination airport. However, this model takes a long time to train so we were not able to implement hyperparameter tuning. With hyperparameter tuning, it could possibly do even better. Given that our training and test accuracy were similar, the model has low variance, but it potentially has high bias, so the model is underfitting a little, and the accuracy and F1 score could be improved by feeding more data to the trees or using a more complex model. 
+
+For the Random Forest model, the training and test accuracy were both approximately 77.11%. The F1 score is 75.27%. This is our second-best model and is impressive because it is only operating on 20% of the training data. Like the GBT model, the variance was low, but the bias was a little high, so the model is underfitting and perhaps letting the model run longer on more data would improve the fit. 
+
+Finally, the KNN model produces a test accuracy of approximately 76.67% while only using 28% of the training data. The F1 score is 66.55%. This is pretty bad and the model overfit heavily as its validation accuracy was 86%.
+
+Overall, our models performed very well! The Bayes Error for predicting a flight delay is notoriously high among frequent fliers. The actual error is really unknown since we would have to conduct human testing to find the true value. Our accuracy for our best model is 80% with an F1 score of 75%, which we believe is much better than a human might do. The Bayes error is assumed high since the human would likely have trouble predicting which of the 9 categories of delays the flight fits into.
+
+In the future, we could look into using RNNs and adding even more weather features. These features could describe hourly weather corresponding to the time of the flight so that weather patterns are more visible. Totals for precipitation, snow, and ice for  24, 12, and 6 hours could also be added to give context on how runway conditions might be affected. In addition to new weather features, the model could also be extended to other airports and throughout multiple years to give a more generalizable model that can be used for predicting weather delays for flights anywhere. Finally, our best model (the Gradient Boosted Tree) could be tuned for hyperparameters in the future, but this took far too long for us to implement during this project.
+
+# Sample Video
+
+You can view a video of our model [here](https://youtu.be/IZXU83XKpPo).
+
+# Model Notebook
 
 Click the link below to run our notebook in Google Colab.
 <!-- Will possibly need to update the link once we get the final notebook. -->
@@ -204,23 +224,3 @@ Click the link below to run our notebook in Google Colab.
   </td>
 </table>
 <br> <br> <br>
-
-# Results
-
-Overall, our models had solid performance! With the best being the Gradient Boosted Tree Model.
-
-For the NN model, the test accuracy was approximately 76.67% with an F1 score of about 67%. These values are ok but not amazing compared to other models. Considering the validation accuracy was around the same, this model is probably underfitting. It is likely it needed 100’s of layers for improvement and that is why there was little change within the grid search hyperparameter tuning. In our experience, this would have taken 6 hours plus which is very hard to coordinate, since colab required browsers to be open to run.
-
-For the Gradient Boosted Tree Model, the training accuracy was approximately 81% and the test accuracy was approximately 80%, which was high compared to the other models. The F1 score was 75.35%. This is by far our best model. Additionally, it was insightful in determining the features that were most important. The top 5 features (in order): Airline, average wind, day of the month, day of the week, and destination airport. However, this model takes a long time to train so we were not able to implement hyperparameter tuning for it so it could be possible to do even better. Given that our training and test accuracy were similar, the model has low variance, but it potentially has high bias, so the model is underfitting a little, and the accuracy and F1 score could be improved by feeding more data to the trees or using a more complex model. 
-
-For the Random Forest model, the training and test accuracy were both approximately 77.11%. The F1 score is 75.27%. This is our second best model and is impressive because it is only operating on 20% of the training data. Like the GBT model, the variance was low, but the bias was a little high, so the model is underfitting a little and perhaps letting the model run longer on more data would improve the fit. 
-
-Finally, the KNN model produces a test accuracy of approximately 76.67% while only using 28% of the  training data. The F1 score is 66.55%. This is pretty bad and the model overfit heavily as its validation accuracy was 86%.
-
-Overall, our models performed very well! The Bayes Error for predicting a flight delay is notoriously high among frequent fliers. The actual error is really unknown since we would have to conduct human testing to find the true value. Our accuracy for our best model is 80% with an F1 score of 75%, which we believe is much better than a human might do. The Bayes error is assumed high since the human would likely have trouble predicting which of the 9 categories of delays the flight fits into.
-
-In the future, we could look into using RNNs and adding even more weather features. These features could describe hourly weather corresponding to the time of the flight so that weather patterns are more visible. Totals for precipitation, snow, and ice for  24, 12, and 6 hours could also be added to give context to how runway conditions might be affected. In addition to new weather features, the model could also be extended to other airports and throughout multiple years to give a more generalizable model that can be used for predicting weather delays for flights anywhere. Finally, our best model (the Gradient Boosted Tree) could be tuned for hyperparameters in the future, but this took far too long for us to implement during this project.
-
-# Sample Video
-
-You can view a video of our model [here](https://youtu.be/IZXU83XKpPo).
