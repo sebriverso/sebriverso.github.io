@@ -98,7 +98,7 @@ From the time between 0-350, there is no flight with a delay length greater than
 Figure 3: Delay Length vs Departure Time for all flights from the Chicago Airport in 2015
 </p>
 
-Intuitively, many people think about snow as a main factor in airport delays. Though as shown in Figure 4, the amount of snow does not necessarily have a clear correlation to the delay time. This could be for a number of reasons. First off, airports in colder climates have experience dealing with snowy conditions and often have developed methods of mitigation, allowing air traffic to run regularly even in snowy conditions. Secondly, the snow’s relationship with weather delays could be more complex than we can represent through a simple graph. For example, snow might not become a huge factor until the temperature dips below the airport’s de-icer’s "holdover time limit" temperature (minimum temperature at which a de-icer is expected to remain effective).
+Intuitively, many people think about snow as a main factor in airport delays. Though as shown in Figure 4, the amount of snow does not necessarily have a clear correlation to the weather delay time. This could be for a number of reasons. First off, airports in colder climates have experience dealing with snowy conditions and often have developed methods of mitigation, allowing air traffic to run regularly even in snowy conditions. Secondly, the snow’s relationship with weather delays could be more complex than we can represent through a simple graph. For example, snow might not become a huge factor until the temperature dips below the airport’s de-icer’s "holdover time limit" temperature (minimum temperature at which a de-icer is expected to remain effective).
 
 ![Scatter plot of snow amount vs delay](Images/Snow_vs_Delay.png)
 
@@ -146,7 +146,7 @@ The primary evaluation metric used for all models is the Keras accuracy score. T
 
 ![Accuracy Equation](Images/Equation_Accuracy.png)
 
-In addition to the accuracy score, we also evaluated the models using the validation loss, which was calculated using the categorical binary cross-entropy loss function in the neural network. The binary cross-entropy is calculated as follows:
+In addition to the accuracy score, we also evaluated the models using the validation loss, which was calculated using the categorical cross-entropy loss function in the neural network. The categorical cross-entropy is calculated as follows:
 
 ![CategoricalCross Equation](Images/Equation_CategoricalCross.png)
 
@@ -162,7 +162,7 @@ where:
 
 The F1 score ranges from 0 to 1, where 1 indicates perfect precision and recall. A high F1 score indicates that the model is able to achieve high precision and recall simultaneously, meaning that it can effectively identify true positive instances while minimizing false positives and false negatives. False positives (predicting a possible delay when there isn’t one), aren’t necessarily dangerous in our model since it is better to be on the cautious side, but we definitely want to minimize false negatives (predicting no delay when there is one) since if our model were to be used as a recommender to ATC, then people’s safety would be at stake. 
 
-In this study, we aimed to develop models that accurately predict weather delays for aircraft with a high degree of precision and recall. To achieve this, we set target numbers for the evaluation metrics used in this study. The target numbers were an accuracy score of at least 80%, a validation loss of less than 0.5, and an F1 score of at least 0.7. These target numbers were chosen based on previous research and domain expertise, as well as considering the consequences of false positives and false negatives in the context of flight delays. We aimed to develop models that can achieve high accuracy, minimize validation loss, and have a high F1 score, thus providing a reliable tool for airlines and passengers to plan their travel effectively.
+In this study, we aimed to develop models that accurately predict weather delays for aircraft with a high degree of precision and recall. To achieve this, we set target numbers for the evaluation metrics used in this study. The target numbers were an accuracy score of at least 80%, and an F1 score of at least 0.7. These target numbers were chosen based on previous research and domain expertise, as well as considering the consequences of false positives and false negatives in the context of flight delays. We aimed to develop models that can achieve high accuracy, minimize validation loss, and have a high F1 score, thus providing a reliable tool for airlines and passengers to plan their travel effectively.
 
 # Models
 
@@ -174,25 +174,25 @@ Vanilla decision trees are unstable – a single new example has the potential t
 
 Overall, we generally trained our models with a random subset of the data consisting of approximately 175,000 samples. The exceptions are mentioned below.
 
+The NN was used because of the complex relationships snow, precipitation, and other weather data might have with each other. NN are good at finding complex relationships and may be able to account for problems like the snow de-icer "holdover time limit" temperature. For the NN, two activation functions were considered for the body of the network: the hyperbolic tangent (tanh) function and the rectified linear unit (ReLU) function. The output layer used the softmax activation function. 
+
 Gradient Boosted Trees create a more accurate model because it trains multiple trees. Each new tree corrects the errors made by the previous trees. This is a good choice for our use case because many of the flights have similar data - airlines repeat the same routes multiple times over the course of the year. However, some of these end up delayed and others don’t. The gradient-boosted trees have the potential to mitigate this problem by correcting for errors and capturing the subtleties.
 
-Random forest models train multiple trees at once. These trees are forced to pick from a random subset of features that diversifies them. Together, the trees create a forest that is collectively more stable and potentially more accurate than the rest of the trees. A major disadvantage of random forest models is that they take a long time to train. We trained our random forest model on a subset (~20%) of the training data. 
+Random forest models train multiple trees at once. These trees are forced to pick from a random subset of features that diversifies them. Together, the trees create a forest that is collectively more stable and potentially more accurate than the rest of the trees. A major disadvantage of random forest models is that they take a long time to train.  We trained our random forest model on a subset (~20%) of the training data. 
 
-The NN was used because of the complex relationships snow, precipitation, and other weather data might have with each other. NN are good at finding complex relationships and may be able to account for problems like the snow de-icer "holdover time limit" temperature. For the NN, two activation functions were considered for the body of the network: the hyperbolic tangent (tanh) function and the rectified linear unit (ReLU) function. The output layer used the softmax activation function.
-
-For KNN, the model was limited to 50k data points to allow for efficient usage.
+For KNN, the model was limited to 50k data points to allow for efficient usage. The rationale behind using the KNN model is similar to Gradient Boosted Tree, as many of the flights have similar data. A KNN model could look for flights with similar feature values and use their outcome (delayed or not) to predict the outcome for the flight in question.
 
 ## Validation
 
 For the majority of our models hyperparameter tuning was done to find the best combination of model parameters that would produce the most accurate results. This was important because using the wrong combination of hyperparameters can lead to overfitting or underfitting of the model. By tuning these parameters, we ensured that our models were optimized for accuracy and performance, allowing us to accurately compare them.
 
-For the Gradient Boosted Trees we used the hyperparameter template suggested by the official keras documentation and this did not significantly improve performance. We decided not to pursue further hyper parameter tuning because the model took a long time to run and our other models were performing better. 
+For the NN, after overfitting on our initial few trials early stopping was implemented to prevent overfitting, and dropout layers were added between all hidden layers with 20% dropout (also to prevent overfitting). The hyperparameters of the hidden layers and neurons were tuned using a grid search. Hidden layers were varied from 1 to 14 (we found in testing that more hidden layers did not affect validation accuracy), and neurons were tuned for values between 30 and 290. All combinations of the number of neurons and hidden layers were tested, and the validation score was plotted to determine the optimal configuration. The most optimal hyperparameters were 6 hidden layers with 180 neurons per layer.
 
-For the Random forest model  we decided not to pursue hyperparameter tuning with this model because the model took so long to run and our other models had better baseline performance.
+For the Gradient Boosted Trees, we used the hyperparameter template suggested by the official keras documentation and this did not significantly improve performance. We decided not to pursue further hyperparameter tuning because the model took an excessively long time to run.
 
-For the NN, after overfitting on our initial few trials early stopping was implemented to prevent overfitting, and dropout layers were added between all hidden layers with 20% dropout (also to prevent overfitting). The hyperparameters of the hidden layers and neurons were tuned using a grid search. Hidden layers were varied from 1 to 14 (we found in testing more hidden layers did not affect val accuracy), and neurons were tuned for values between 30 and 290. All combinations of the number of neurons and hidden layers were tested, and the validation score was plotted to determine the optimal configuration. 
+For the Random forest model, we decided not to pursue hyperparameter tuning with this model because the model also took so long to run.
 
-For the KNN, the hyperparameter k was tuned for values between 1 and 20. The accuracy score was plotted against the values of k to determine the optimal k value.
+For the KNN, the hyperparameter k was tuned for values between 1 and 20. The accuracy score was plotted against the values of k to determine the most optimal k value of 5.
 
 ## Model Notebook
 
@@ -207,6 +207,20 @@ Click the link below to run our notebook in Google Colab.
 
 # Results
 
+Overall, our models had solid performance! With the best being the Gradient Boosted Tree Model.
+
+For the NN model, the test accuracy was approximately 76.67% with an F1 score of about 67%. These values are ok but not amazing compared to other models. Considering the validation accuracy was around the same, this model is probably underfitting. It is likely it needed 100’s of layers for improvement and that is why there was little change within the grid search hyperparameter tuning. In our experience, this would have taken 6 hours plus which is very hard to coordinate, since colab required browsers to be open to run.
+
+For the Gradient Boosted Tree Model, the training accuracy was approximately 81% and the test accuracy was approximately 80%, which was high compared to the other models. The F1 score was 75.35%. This is by far our best model. Additionally, it was insightful in determining the features that were most important. The top 5 features (in order): Airline, average wind, day of the month, day of the week, and destination airport. However, this model takes a long time to train so we were not able to implement hyperparameter tuning for it so it could be possible to do even better. Given that our training and test accuracy were similar, the model has low variance, but it potentially has high bias, so the model is underfitting a little, and the accuracy and F1 score could be improved by feeding more data to the trees or using a more complex model. 
+
+For the Random Forest model, the training and test accuracy were both approximately 77.11%. The F1 score is 75.27%. This is our second best model and is impressive because it is only operating on 20% of the training data. Like the GBT model, the variance was low, but the bias was a little high, so the model is underfitting a little and perhaps letting the model run longer on more data would improve the fit. 
+
+Finally, the KNN model produces a test accuracy of approximately 76.67% while only using 28% of the  training data. The F1 score is 66.55%. This is pretty bad and the model overfit heavily as its validation accuracy was 86%.
+
+Overall, our models performed very well! The Bayes Error for predicting a flight delay is notoriously high among frequent fliers. The actual error is really unknown since we would have to conduct human testing to find the true value. Our accuracy for our best model is 80% with an F1 score of 75%, which we believe is much better than a human might do. The Bayes error is assumed high since the human would likely have trouble predicting which of the 9 categories of delays the flight fits into.
+
+In the future, we could look into using RNNs and adding even more weather features. These features could describe hourly weather corresponding to the time of the flight so that weather patterns are more visible. Totals for precipitation, snow, and ice for  24, 12, and 6 hours could also be added to give context to how runway conditions might be affected. In addition to new weather features, the model could also be extended to other airports and throughout multiple years to give a more generalizable model that can be used for predicting weather delays for flights anywhere. Finally, our best model (the Gradient Boosted Tree) could be tuned for hyperparameters in the future, but this took far too long for us to implement during this project.
+
 # Sample Video
 
-You can view a video of our model here. <!-- Add in the link for the video.-->
+You can view a video of our model [here](https://youtu.be/IZXU83XKpPo).
