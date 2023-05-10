@@ -1,4 +1,8 @@
-# Flight Predictions
+# Flight Delay Predictions
+
+<p align="center">
+Project by Claire Liu, Cameron Schmidt, Sebastiano Riverso, and Kyle Zurmuhl
+</p>
 
 - [The Problem](#the-problem)
 - [Data](#data)
@@ -212,7 +216,7 @@ In the future, we could look into using RNNs and adding even more weather featur
 
 # Sample Video
 
-You can view a video of our model [here](https://youtu.be/IZXU83XKpPo).
+You can view a video of our model [here](https://youtu.be/zNSNVb974QY).
 
 # Model Notebook
 
